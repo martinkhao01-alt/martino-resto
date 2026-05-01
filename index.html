@@ -6,340 +6,204 @@
   <title>Martino-resto</title>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#e03131">
-
   <style>
-    :root {
-      --primary: #e03131;
-      --bg: #f8f9fa;
-      --text: #2b2b2b;
-    }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      margin: 0;
-      padding: 20px;
-    }
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-    }
-    header {
-      text-align: center;
-      margin-bottom: 25px;
-    }
-    h1 {
-      color: var(--primary);
-      margin: 0;
-    }
-    form {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-      margin-bottom: 30px;
-    }
-    .form-group {
-      margin-bottom: 15px;
-    }
-    label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 5px;
-    }
-    input, textarea, select {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      box-sizing: border-box;
-      font-size: 16px;
-    }
-    button {
-      background-color: var(--primary);
-      color: white;
-      border: none;
-      padding: 12px;
-      width: 100%;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: opacity 0.2s;
-    }
-    button:hover {
-      opacity: 0.9;
-    }
+    :root { --primary: #e03131; --bg: #f8f9fa; --text: #2b2b2b; }
+    body { font-family: sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
+    .container { max-width: 800px; margin: 0 auto; }
     
-    /* Search Bar section */
-    .search-container {
-      margin-bottom: 20px;
-    }
-    .search-input {
-      background-color: white;
-      border: 1px solid #ddd;
-      padding: 12px;
-      font-size: 16px;
-    }
+    /* Formulaire */
+    form { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 30px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .form-group { margin-bottom: 12px; }
+    label { display: block; font-weight: bold; font-size: 14px; margin-bottom: 5px; }
+    input, textarea, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+    button { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; }
 
-    /* Miniature Grid Layout */
-    .restos-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 15px;
+    /* Recherche et Grille */
+    #searchInput { margin-bottom: 20px; padding: 12px; border-radius: 25px; border: 1px solid #ddd; width: 100%; box-sizing: border-box; }
+    .restos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; }
+    
+    /* Miniature */
+    .resto-card { background: white; border-radius: 12px; overflow: hidden; cursor: pointer; transition: transform 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .resto-card:hover { transform: scale(1.02); }
+    .mini-img { width: 100%; height: 120px; object-fit: cover; }
+    .mini-body { padding: 10px; }
+    .mini-title { font-weight: bold; font-size: 15px; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .mini-rating { color: #ff922b; font-size: 12px; }
+
+    /* Vue Plein Écran (Overlay) */
+    #detailOverlay { 
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+      background: white; z-index: 1000; overflow-y: auto; padding-bottom: 50px;
     }
-    .resto-card {
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      height: 100%;
+    .full-header { position: relative; width: 100%; height: 250px; background: #eee; }
+    .full-header img { width: 100%; height: 100%; object-fit: cover; }
+    .back-btn { 
+      position: absolute; top: 20px; left: 20px; background: rgba(0,0,0,0.5); 
+      color: white; border: none; padding: 10px 15px; border-radius: 50px; cursor: pointer; 
     }
-    .resto-img {
-      width: 100%;
-      height: 140px;
-      object-fit: cover;
-      background-color: #eee;
+    .full-content { padding: 20px; }
+    .full-info-row { display: flex; gap: 15px; margin: 15px 0; flex-wrap: wrap; }
+    .action-link { 
+      text-decoration: none; background: #f1f3f5; padding: 10px; 
+      border-radius: 8px; color: var(--text); font-size: 14px; flex: 1; text-align: center;
     }
-    .resto-body {
-      padding: 12px;
-      display: flex;
-      flex-direction: column;
-      flex-grow: 1;
-    }
-    .resto-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 5px;
-    }
-    .resto-title {
-      font-size: 16px;
-      font-weight: bold;
-      margin: 0;
-      word-break: break-word;
-    }
-    .resto-rating {
-      font-size: 12px;
-      white-space: nowrap;
-    }
-    .resto-date {
-      font-size: 11px;
-      color: #999;
-      margin-bottom: 6px;
-    }
-    .resto-address {
-      font-size: 13px;
-      color: #555;
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-    .map-icon {
-      text-decoration: none;
-      font-size: 16px;
-      display: inline-block;
-    }
-    .resto-comment {
-      background: #f1f3f5;
-      padding: 8px;
-      border-radius: 6px;
-      font-style: italic;
-      font-size: 13px;
-      margin-bottom: 10px;
-      flex-grow: 1;
-      word-break: break-word;
-    }
-    .delete-btn {
-      background-color: #fa5252;
-      padding: 6px 10px;
-      font-size: 12px;
-      width: 100%;
-      margin-top: auto;
-    }
+    .photo-gallery { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 20px; }
+    .gallery-img { width: 100%; border-radius: 8px; }
+    .delete-area { margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px; }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <header>
-      <h1>🍴 Martino-resto</h1>
-      <p>Mon carnet d'adresses de restaurants</p>
-    </header>
+<div class="container" id="mainView">
+  <header style="text-align:center"><h1>🍴 Martino-resto</h1></header>
 
-    <!-- Formulaire d'ajout -->
-    <form id="restoForm">
-      <div class="form-group">
-        <label for="name">Nom du restaurant *</label>
-        <input type="text" id="name" required placeholder="Ex: Chez Luigi">
-      </div>
-      <div class="form-group">
-        <label for="address">Adresse *</label>
-        <input type="text" id="address" required placeholder="Ex: 10 Rue de Paris, 75001">
-      </div>
-      <div class="form-group">
-        <label for="rating">Note</label>
-        <select id="rating">
-          <option value="5">⭐⭐⭐⭐⭐ (Excellent)</option>
-          <option value="4">⭐⭐⭐⭐ (Très bon)</option>
-          <option value="3">⭐⭐⭐ (Bon)</option>
-          <option value="2">⭐⭐ (Moyen)</option>
-          <option value="1">⭐ (À éviter)</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="photo">Photo du restaurant</label>
-        <input type="file" id="photo" accept="image/*">
-      </div>
-      <div class="form-group">
-        <label for="comment">Commentaires & avis</label>
-        <textarea id="comment" rows="2" placeholder="Ce que tu as aimé..."></textarea>
-      </div>
-      <button type="submit">Enregistrer le restaurant</button>
-    </form>
-
-    <!-- Barre de recherche -->
-    <div class="search-container">
-      <input type="text" id="searchInput" class="search-input" placeholder="🔍 Rechercher un restaurant (nom, adresse, avis...)" onkeyup="filterRestaurants()">
+  <form id="restoForm">
+    <div class="form-group"><label>Nom du restaurant *</label><input type="text" id="name" required></div>
+    <div class="form-group"><label>Adresse *</label><input type="text" id="address" required></div>
+    <div class="form-row">
+      <div class="form-group"><label>📞 Téléphone</label><input type="tel" id="phone"></div>
+      <div class="form-group"><label>🌐 Site Web</label><input type="url" id="website"></div>
     </div>
+    <div class="form-row">
+      <div class="form-group"><label>Note</label><select id="rating"><option value="5">⭐⭐⭐⭐⭐</option><option value="4">⭐⭐⭐⭐</option><option value="3">⭐⭐⭐</option><option value="2">⭐⭐</option><option value="1">⭐</option></select></div>
+      <div class="form-group"><label>Photos (plusieurs possibles)</label><input type="file" id="photos" accept="image/*" multiple></div>
+    </div>
+    <div class="form-group"><label>Commentaires</label><textarea id="comment" rows="2"></textarea></div>
+    <button type="submit">Enregistrer</button>
+  </form>
 
-    <!-- Liste des restaurants sous forme de miniatures (Grille) -->
-    <div id="restosList" class="restos-grid"></div>
-  </div>
+  <input type="text" id="searchInput" placeholder="🔍 Rechercher..." onkeyup="filterRestos()">
+  <div id="restosList" class="restos-grid"></div>
+</div>
 
-  <script>
-    let db;
-    let allRestos = [];
-    const request = indexedDB.open('RestoDB', 1);
+<div id="detailOverlay">
+  <button class="back-btn" onclick="closeDetails()">← Retour</button>
+  <div id="detailContent"></div>
+</div>
 
-    request.onupgradeneeded = function(e) {
-      db = e.target.result;
-      if (!db.objectStoreNames.contains('restaurants')) {
-        db.createObjectStore('restaurants', { keyPath: 'id', autoIncrement: true });
-      }
+<script>
+  let db;
+  let allRestos = [];
+  const request = indexedDB.open('RestoDB', 2); // Version 2 pour les nouveaux champs
+
+  request.onupgradeneeded = e => {
+    db = e.target.result;
+    if (!db.objectStoreNames.contains('restaurants')) {
+      db.createObjectStore('restaurants', { keyPath: 'id', autoIncrement: true });
+    }
+  };
+
+  request.onsuccess = e => { db = e.target.result; loadRestos(); };
+
+  document.getElementById('restoForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const files = document.getElementById('photos').files;
+    const photoPromises = Array.from(files).map(file => new Promise(resolve => {
+      const reader = new FileReader();
+      reader.onload = ev => resolve(ev.target.result);
+      reader.readAsDataURL(file);
+    }));
+    
+    const photosBase64 = await Promise.all(photoPromises);
+    
+    const data = {
+      name: document.getElementById('name').value,
+      address: document.getElementById('address').value,
+      phone: document.getElementById('phone').value,
+      website: document.getElementById('website').value,
+      rating: document.getElementById('rating').value,
+      comment: document.getElementById('comment').value,
+      photos: photosBase64,
+      date: new Date().toLocaleDateString('fr-FR')
     };
 
-    request.onsuccess = function(e) {
-      db = e.target.result;
-      loadRestaurants();
+    const tx = db.transaction('restaurants', 'readwrite');
+    tx.objectStore('restaurants').add(data);
+    tx.oncomplete = () => { document.getElementById('restoForm').reset(); loadRestos(); };
+  });
+
+  function loadRestos() {
+    allRestos = [];
+    const store = db.transaction('restaurants').objectStore('restaurants');
+    store.openCursor(null, 'prev').onsuccess = e => {
+      const cursor = e.target.result;
+      if (cursor) { allRestos.push(cursor.value); cursor.continue(); }
+      else { displayRestos(allRestos); }
     };
+  }
 
-    document.getElementById('restoForm').addEventListener('submit', function(e) {
-      e.preventDefault();
+  function displayRestos(list) {
+    const grid = document.getElementById('restosList');
+    grid.innerHTML = list.map(r => `
+      <div class="resto-card" onclick="openDetails(${r.id})">
+        <img class="mini-img" src="${r.photos[0] || 'https://via.placeholder.com/150'}">
+        <div class="mini-body">
+          <p class="mini-title">${r.name}</p>
+          <span class="mini-rating">${'⭐'.repeat(r.rating)}</span>
+        </div>
+      </div>
+    `).join('');
+  }
 
-      const name = document.getElementById('name').value;
-      const address = document.getElementById('address').value;
-      const rating = document.getElementById('rating').value;
-      const comment = document.getElementById('comment').value;
-      const photoFile = document.getElementById('photo').files[0];
-      const dateCreated = new Date().toLocaleDateString('fr-FR');
+  window.openDetails = function(id) {
+    const resto = allRestos.find(r => r.id === id);
+    const overlay = document.getElementById('detailOverlay');
+    const content = document.getElementById('detailContent');
+    
+    content.innerHTML = `
+      <div class="full-header">
+        <img src="${resto.photos[0] || ''}">
+      </div>
+      <div class="full-content">
+        <h1>${resto.name}</h1>
+        <p style="color:#777">Ajouté le ${resto.date}</p>
+        <div class="mini-rating" style="font-size:20px">${'⭐'.repeat(resto.rating)}</div>
+        
+        <div class="full-info-row">
+          <a class="action-link" href="tel:${resto.phone}">📞 Appeler</a>
+          <a class="action-link" href="${resto.website}" target="_blank">🌐 Site Web</a>
+          <a class="action-link" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(resto.address)}" target="_blank">🗺️ Carte</a>
+        </div>
 
-      if (photoFile) {
-        const reader = new FileReader();
-        reader.onload = function(event) {
-          saveToDB({ name, address, rating, comment, photo: event.target.result, date: dateCreated });
-        };
-        reader.readAsDataURL(photoFile);
-      } else {
-        saveToDB({ name, address, rating, comment, photo: '', date: dateCreated });
-      }
-    });
+        <h3>📍 Adresse</h3>
+        <p>${resto.address}</p>
 
-    function saveToDB(restoData) {
-      const transaction = db.transaction(['restaurants'], 'readwrite');
-      const store = transaction.objectStore('restaurants');
-      store.add(restoData);
+        <h3>💬 Mon avis</h3>
+        <p>${resto.comment || 'Aucun commentaire.'}</p>
 
-      transaction.oncomplete = function() {
-        document.getElementById('restoForm').reset();
-        loadRestaurants();
-      };
+        <h3>📸 Photos</h3>
+        <div class="photo-gallery">
+          ${resto.photos.map(p => `<img src="${p}" class="gallery-img">`).join('')}
+        </div>
+
+        <div class="delete-area">
+          <button class="delete-btn" style="background:#ffc9c9; color:#e03131; border:none; padding:10px; border-radius:8px" onclick="deleteResto(${resto.id})">Supprimer cette fiche</button>
+        </div>
+      </div>
+    `;
+    overlay.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+  };
+
+  window.closeDetails = () => {
+    document.getElementById('detailOverlay').style.display = 'none';
+    document.body.style.overflow = 'auto';
+  };
+
+  window.deleteResto = id => {
+    if(confirm('Supprimer ?')) {
+      const tx = db.transaction('restaurants', 'readwrite');
+      tx.objectStore('restaurants').delete(id);
+      tx.oncomplete = () => { closeDetails(); loadRestos(); };
     }
+  };
 
-    function loadRestaurants() {
-      allRestos = [];
-      const transaction = db.transaction(['restaurants'], 'readonly');
-      const store = transaction.objectStore('restaurants');
-      const request = store.openCursor(null, 'prev');
-
-      request.onsuccess = function(e) {
-        const cursor = e.target.result;
-        if (cursor) {
-          allRestos.push(cursor.value);
-          cursor.continue();
-        } else {
-          displayRestaurants(allRestos);
-        }
-      };
-    }
-
-    function displayRestaurants(restos) {
-      const restosList = document.getElementById('restosList');
-      restosList.innerHTML = '';
-
-      if (restos.length === 0) {
-        restosList.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #777;">Aucun restaurant trouvé.</p>';
-        return;
-      }
-
-      restos.forEach(resto => {
-        const stars = '⭐'.repeat(resto.rating);
-        const mapLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(resto.address)}`;
-
-        const card = document.createElement('div');
-        card.className = 'resto-card';
-        card.innerHTML = `
-          ${resto.photo ? `<img src="${resto.photo}" class="resto-img" alt="${resto.name}">` : `<div class="resto-img" style="display:flex;align-items:center;justify-content:center;color:#aaa;">Pas d'image</div>`}
-          <div class="resto-body">
-            <div class="resto-header">
-              <span class="resto-title">${resto.name}</span>
-              <span class="resto-rating">${stars}</span>
-            </div>
-            <div class="resto-date">Ajouté le ${resto.date || 'Inconnue'}</div>
-            <div class="resto-address">
-              <span>${resto.address}</span>
-              <a href="${mapLink}" target="_blank" class="map-icon" title="Ouvrir dans Google Maps">🗺️</a>
-            </div>
-            ${resto.comment ? `<div class="resto-comment">« ${resto.comment} »</div>` : ''}
-            <button class="delete-btn" onclick="deleteResto(${resto.id})">Supprimer</button>
-          </div>
-        `;
-
-        restosList.appendChild(card);
-      });
-    }
-
-    function filterRestaurants() {
-      const query = document.getElementById('searchInput').value.toLowerCase().trim();
-      const filtered = allRestos.filter(resto => {
-        return resto.name.toLowerCase().includes(query) ||
-               resto.address.toLowerCase().includes(query) ||
-               (resto.comment && resto.comment.toLowerCase().includes(query));
-      });
-      displayRestaurants(filtered);
-    }
-
-    window.deleteResto = function(id) {
-      if (confirm('Supprimer ce restaurant ?')) {
-        const transaction = db.transaction(['restaurants'], 'readwrite');
-        const store = transaction.objectStore('restaurants');
-        store.delete(id);
-        transaction.oncomplete = function() {
-          loadRestaurants();
-        };
-      }
-    };
-
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js')
-          .then(reg => console.log('Service Worker enregistré !'))
-          .catch(err => console.error('Erreur Service Worker', err));
-      });
-    }
-  </script>
+  function filterRestos() {
+    const q = document.getElementById('searchInput').value.toLowerCase();
+    const filtered = allRestos.filter(r => r.name.toLowerCase().includes(q) || r.address.toLowerCase().includes(q));
+    displayRestos(filtered);
+  }
+</script>
 </body>
 </html>
