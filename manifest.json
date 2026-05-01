@@ -1,16 +1,17 @@
 {
-  "short_name": "Martino-resto",
   "name": "Martino-resto",
+  "short_name": "Martino",
+  "description": "Mon carnet d'adresses de restaurants favoris.",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#e03131",
   "icons": [
     {
       "src": "icon.png",
+      "sizes": "512x512",
       "type": "image/png",
-      "sizes": "512x512"
+      "purpose": "any maskable"
     }
-  ],
-  "start_url": "./index.html",
-  "background_color": "#f8f9fa",
-  "display": "standalone",
-  "theme_color": "#e03131",
-  "description": "Mon carnet d'adresses de restaurants favoris."
+  ]
 }
