@@ -3,7 +3,7 @@
   "name": "Martino-resto",
   "icons": [
     {
-      "src": "https://cdn-icons-png.flaticon.com/512/1996/1996055.png",
+      "src": "icon.png",
       "type": "image/png",
       "sizes": "512x512"
     }
