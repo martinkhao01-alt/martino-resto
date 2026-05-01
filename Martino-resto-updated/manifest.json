@@ -1,0 +1,16 @@
+{
+  "short_name": "Martino-resto",
+  "name": "Martino-resto",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/1996/1996055.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "./index.html",
+  "background_color": "#f8f9fa",
+  "display": "standalone",
+  "theme_color": "#e03131",
+  "description": "Mon carnet d'adresses de restaurants favoris."
+}
