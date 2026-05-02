@@ -7,8 +7,8 @@
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#e03131">
   <style>
-    :root { --primary: #e03131; --bg: #f8f9fa; --text: #2b2b2b; }
-    body { font-family: sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
+    :root { --primary: #e03131; --bg: #f8f9fa; --text: #2b2b2b; --secondary: #495057; }
+    body { font-family: sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 15px; }
     .container { max-width: 800px; margin: 0 auto; }
     
     /* Formulaire */
@@ -16,77 +16,84 @@
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .form-group { margin-bottom: 12px; }
     label { display: block; font-weight: bold; font-size: 14px; margin-bottom: 5px; }
-    input, textarea, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-    button { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; }
-
-    /* Recherche et Grille */
-    #searchInput { margin-bottom: 20px; padding: 12px; border-radius: 25px; border: 1px solid #ddd; width: 100%; box-sizing: border-box; }
-    .restos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; }
+    input, textarea, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
     
-    /* Miniature */
-    .resto-card { background: white; border-radius: 12px; overflow: hidden; cursor: pointer; transition: transform 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-    .resto-card:hover { transform: scale(1.02); }
+    .btn-group { display: flex; gap: 10px; margin-top: 10px; }
+    button { background: var(--primary); color: white; border: none; padding: 14px; border-radius: 8px; font-weight: bold; cursor: pointer; flex: 1; }
+    button.cancel { background: var(--secondary); }
+
+    /* Zone de gestion des photos en mode édition */
+    #editPhotoPreview { display: flex; gap: 10px; flex-wrap: wrap; margin: 10px 0; padding: 10px; background: #f1f3f5; border-radius: 8px; }
+    .edit-photo-item { position: relative; width: 80px; height: 80px; }
+    .edit-photo-item img { width: 100%; height: 100%; object-fit: cover; border-radius: 5px; }
+    .remove-photo-btn { position: absolute; top: -5px; right: -5px; background: red; color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; font-size: 12px; font-weight: bold; }
+
+    /* Grille et Cartes */
+    #searchInput { margin-bottom: 20px; padding: 12px 20px; border-radius: 25px; border: 1px solid #ddd; width: 100%; box-sizing: border-box; }
+    .restos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; }
+    .resto-card { background: white; border-radius: 12px; overflow: hidden; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border: 1px solid #eee; }
     .mini-img { width: 100%; height: 120px; object-fit: cover; }
     .mini-body { padding: 10px; }
     .mini-title { font-weight: bold; font-size: 15px; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .mini-rating { color: #ff922b; font-size: 12px; }
 
-    /* Vue Plein Écran (Overlay) */
-    #detailOverlay { 
-      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-      background: white; z-index: 1000; overflow-y: auto; padding-bottom: 50px;
-    }
+    /* Overlay Fiche */
+    #detailOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 1000; overflow-y: auto; }
     .full-header { position: relative; width: 100%; height: 250px; background: #eee; }
     .full-header img { width: 100%; height: 100%; object-fit: cover; }
-    .back-btn { 
-      position: absolute; top: 20px; left: 20px; background: rgba(0,0,0,0.5); 
-      color: white; border: none; padding: 10px 15px; border-radius: 50px; cursor: pointer; 
-    }
-    .full-content { padding: 20px; }
-    .full-info-row { display: flex; gap: 15px; margin: 15px 0; flex-wrap: wrap; }
-    .action-link { 
-      text-decoration: none; background: #f1f3f5; padding: 10px; 
-      border-radius: 8px; color: var(--text); font-size: 14px; flex: 1; text-align: center;
-    }
+    .nav-buttons { position: absolute; top: 20px; left: 0; width: 100%; display: flex; justify-content: space-between; padding: 0 20px; box-sizing: border-box; }
+    .circle-btn { background: rgba(255,255,255,0.9); color: var(--text); border: none; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.2); cursor: pointer; }
+
+    .full-content { padding: 20px; padding-bottom: 100px; }
+    .full-info-row { display: flex; gap: 10px; margin: 20px 0; }
+    .action-link { text-decoration: none; background: #f1f3f5; padding: 12px; border-radius: 10px; color: var(--text); font-size: 14px; flex: 1; text-align: center; font-weight: bold; }
     .photo-gallery { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 20px; }
-    .gallery-img { width: 100%; border-radius: 8px; }
-    .delete-area { margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px; }
+    .gallery-img { width: 100%; height: 150px; object-fit: cover; border-radius: 8px; }
   </style>
 </head>
 <body>
 
-<div class="container" id="mainView">
-  <header style="text-align:center"><h1>🍴 Martino-resto</h1></header>
+<div class="container">
+  <header style="text-align:center; padding: 10px 0;"><h1>🍴 Martino-resto</h1></header>
 
   <form id="restoForm">
-    <div class="form-group"><label>Nom du restaurant *</label><input type="text" id="name" required></div>
-    <div class="form-group"><label>Adresse *</label><input type="text" id="address" required></div>
+    <input type="hidden" id="editId">
+    <div class="form-group"><label>Nom du restaurant</label><input type="text" id="name" required></div>
+    <div class="form-group"><label>Adresse</label><input type="text" id="address" required></div>
     <div class="form-row">
       <div class="form-group"><label>📞 Téléphone</label><input type="tel" id="phone"></div>
       <div class="form-group"><label>🌐 Site Web</label><input type="url" id="website"></div>
     </div>
+    
+    <div class="form-group" id="editPhotoArea" style="display:none">
+      <label>Photos enregistrées (clique sur × pour supprimer)</label>
+      <div id="editPhotoPreview"></div>
+    </div>
+
     <div class="form-row">
       <div class="form-group"><label>Note</label><select id="rating"><option value="5">⭐⭐⭐⭐⭐</option><option value="4">⭐⭐⭐⭐</option><option value="3">⭐⭐⭐</option><option value="2">⭐⭐</option><option value="1">⭐</option></select></div>
-      <div class="form-group"><label>Photos (plusieurs possibles)</label><input type="file" id="photos" accept="image/*" multiple></div>
+      <div class="form-group"><label>Ajouter des photos</label><input type="file" id="photos" accept="image/*" multiple></div>
     </div>
-    <div class="form-group"><label>Commentaires</label><textarea id="comment" rows="2"></textarea></div>
-    <button type="submit">Enregistrer</button>
+    <div class="form-group"><label>Commentaires / Avis</label><textarea id="comment" rows="3"></textarea></div>
+    <div class="btn-group">
+      <button type="submit" id="submitBtn">Enregistrer</button>
+      <button type="button" id="cancelEdit" class="cancel" style="display:none" onclick="resetForm()">Annuler</button>
+    </div>
   </form>
 
   <input type="text" id="searchInput" placeholder="🔍 Rechercher..." onkeyup="filterRestos()">
   <div id="restosList" class="restos-grid"></div>
 </div>
 
-<div id="detailOverlay">
-  <button class="back-btn" onclick="closeDetails()">← Retour</button>
-  <div id="detailContent"></div>
-</div>
+<div id="detailOverlay"><div id="detailContent"></div></div>
 
 <script>
   let db;
   let allRestos = [];
-  const request = indexedDB.open('RestoDB', 2); // Version 2 pour les nouveaux champs
+  let currentPhotos = [];
 
+  const request = indexedDB.open('RestoDB', 2);
+  request.onsuccess = e => { db = e.target.result; loadRestos(); };
   request.onupgradeneeded = e => {
     db = e.target.result;
     if (!db.objectStoreNames.contains('restaurants')) {
@@ -94,19 +101,24 @@
     }
   };
 
-  request.onsuccess = e => { db = e.target.result; loadRestos(); };
-
   document.getElementById('restoForm').addEventListener('submit', async e => {
     e.preventDefault();
+    const editId = document.getElementById('editId').value;
     const files = document.getElementById('photos').files;
-    const photoPromises = Array.from(files).map(file => new Promise(resolve => {
-      const reader = new FileReader();
-      reader.onload = ev => resolve(ev.target.result);
-      reader.readAsDataURL(file);
-    }));
     
-    const photosBase64 = await Promise.all(photoPromises);
-    
+    // On part des photos qui n'ont pas été supprimées de la prévisualisation
+    let photosBase64 = [...currentPhotos];
+
+    if (files.length > 0) {
+      const newPhotoPromises = Array.from(files).map(file => new Promise(resolve => {
+        const reader = new FileReader();
+        reader.onload = ev => resolve(ev.target.result);
+        reader.readAsDataURL(file);
+      }));
+      const newPhotos = await Promise.all(newPhotoPromises);
+      photosBase64 = [...photosBase64, ...newPhotos];
+    }
+
     const data = {
       name: document.getElementById('name').value,
       address: document.getElementById('address').value,
@@ -119,8 +131,11 @@
     };
 
     const tx = db.transaction('restaurants', 'readwrite');
-    tx.objectStore('restaurants').add(data);
-    tx.oncomplete = () => { document.getElementById('restoForm').reset(); loadRestos(); };
+    const store = tx.objectStore('restaurants');
+    if (editId) { data.id = parseInt(editId); store.put(data); } 
+    else { store.add(data); }
+
+    tx.oncomplete = () => { resetForm(); loadRestos(); };
   });
 
   function loadRestos() {
@@ -150,55 +165,78 @@
     const resto = allRestos.find(r => r.id === id);
     const overlay = document.getElementById('detailOverlay');
     const content = document.getElementById('detailContent');
-    
     content.innerHTML = `
       <div class="full-header">
-        <img src="${resto.photos[0] || ''}">
+        <img src="${resto.photos[0] || 'https://via.placeholder.com/400x250'}">
+        <div class="nav-buttons">
+          <button class="circle-btn" onclick="closeDetails()">✕</button>
+          <button class="circle-btn" onclick="prepareEdit(${resto.id})">✏️</button>
+        </div>
       </div>
       <div class="full-content">
         <h1>${resto.name}</h1>
-        <p style="color:#777">Ajouté le ${resto.date}</p>
-        <div class="mini-rating" style="font-size:20px">${'⭐'.repeat(resto.rating)}</div>
-        
+        <div class="mini-rating" style="font-size:22px">${'⭐'.repeat(resto.rating)}</div>
+        <p>📍 ${resto.address}</p>
         <div class="full-info-row">
-          <a class="action-link" href="tel:${resto.phone}">📞 Appeler</a>
-          <a class="action-link" href="${resto.website}" target="_blank">🌐 Site Web</a>
-          <a class="action-link" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(resto.address)}" target="_blank">🗺️ Carte</a>
+          ${resto.phone ? `<a class="action-link" href="tel:${resto.phone}">📞 Appeler</a>` : ''}
+          ${resto.website ? `<a class="action-link" href="${resto.website}" target="_blank">🌐 Site</a>` : ''}
         </div>
-
-        <h3>📍 Adresse</h3>
-        <p>${resto.address}</p>
-
-        <h3>💬 Mon avis</h3>
-        <p>${resto.comment || 'Aucun commentaire.'}</p>
-
-        <h3>📸 Photos</h3>
-        <div class="photo-gallery">
-          ${resto.photos.map(p => `<img src="${p}" class="gallery-img">`).join('')}
-        </div>
-
-        <div class="delete-area">
-          <button class="delete-btn" style="background:#ffc9c9; color:#e03131; border:none; padding:10px; border-radius:8px" onclick="deleteResto(${resto.id})">Supprimer cette fiche</button>
-        </div>
+        <h3>Mon avis</h3>
+        <p style="background:#f8f9fa; padding:15px; border-radius:10px">${resto.comment || ''}</p>
+        <h3>Galerie (${resto.photos.length})</h3>
+        <div class="photo-gallery">${resto.photos.map(p => `<img src="${p}" class="gallery-img">`).join('')}</div>
       </div>
     `;
     overlay.style.display = 'block';
     document.body.style.overflow = 'hidden';
   };
 
-  window.closeDetails = () => {
-    document.getElementById('detailOverlay').style.display = 'none';
-    document.body.style.overflow = 'auto';
+  window.prepareEdit = function(id) {
+    const resto = allRestos.find(r => r.id === id);
+    document.getElementById('editId').value = resto.id;
+    document.getElementById('name').value = resto.name;
+    document.getElementById('address').value = resto.address;
+    document.getElementById('phone').value = resto.phone || '';
+    document.getElementById('website').value = resto.website || '';
+    document.getElementById('rating').value = resto.rating;
+    document.getElementById('comment').value = resto.comment || '';
+    
+    currentPhotos = [...resto.photos];
+    renderPhotoEditPreview();
+    
+    document.getElementById('editPhotoArea').style.display = "block";
+    document.getElementById('submitBtn').innerText = "Mettre à jour";
+    document.getElementById('cancelEdit').style.display = "block";
+    closeDetails();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  window.deleteResto = id => {
-    if(confirm('Supprimer ?')) {
-      const tx = db.transaction('restaurants', 'readwrite');
-      tx.objectStore('restaurants').delete(id);
-      tx.oncomplete = () => { closeDetails(); loadRestos(); };
-    }
+  function renderPhotoEditPreview() {
+    const container = document.getElementById('editPhotoPreview');
+    container.innerHTML = currentPhotos.map((p, index) => `
+      <div class="edit-photo-item">
+        <img src="${p}">
+        <button type="button" class="remove-photo-btn" onclick="removePhoto(${index})">×</button>
+      </div>
+    `).join('');
+  }
+
+  window.removePhoto = function(index) {
+    currentPhotos.splice(index, 1);
+    renderPhotoEditPreview();
   };
 
+  window.resetForm = function() {
+    document.getElementById('restoForm').reset();
+    document.getElementById('editId').value = "";
+    document.getElementById('editPhotoArea').style.display = "none";
+    currentPhotos = [];
+    document.getElementById('submitBtn').innerText = "Enregistrer";
+    document.getElementById('cancelEdit').style.display = "none";
+  };
+
+  window.closeDetails = () => { document.getElementById('detailOverlay').style.display = 'none'; document.body.style.overflow = 'auto'; };
+  
   function filterRestos() {
     const q = document.getElementById('searchInput').value.toLowerCase();
     const filtered = allRestos.filter(r => r.name.toLowerCase().includes(q) || r.address.toLowerCase().includes(q));
